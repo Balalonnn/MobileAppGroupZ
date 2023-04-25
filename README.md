@@ -1,4 +1,4 @@
-# flutter_application_1
+# vibesshop
 
 A new Flutter project.
 

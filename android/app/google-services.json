@@ -1,33 +1,33 @@
 {
   "project_info": {
-    "project_number": "811959661135",
-    "project_id": "vibesshop-mobileapp",
-    "storage_bucket": "vibesshop-mobileapp.appspot.com"
+    "project_number": "706853876894",
+    "project_id": "vibesshop-60378",
+    "storage_bucket": "vibesshop-60378.appspot.com"
   },
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:811959661135:android:097220f3bd61f4f3a9303a",
+        "mobilesdk_app_id": "1:706853876894:android:bb510aa5fe1d82cb25f78f",
         "android_client_info": {
-          "package_name": "com.example.flutter_application_1"
+          "package_name": "com.example.vibesshop"
         }
       },
       "oauth_client": [
         {
-          "client_id": "811959661135-cbh6rvns9c1845eqagmlgsvkte8pfr94.apps.googleusercontent.com",
+          "client_id": "706853876894-39dnr3nmrf2bhe08a430t8jr5h6lmq6c.apps.googleusercontent.com",
           "client_type": 3
         }
       ],
       "api_key": [
         {
-          "current_key": "AIzaSyA-Tq_z8d8eyb4H6JsGzq9evEkoX5wakTA"
+          "current_key": "AIzaSyB4B0B5upChWyh9qeB7CsiRDW2XcyT0MFM"
         }
       ],
       "services": {
         "appinvite_service": {
           "other_platform_oauth_client": [
             {
-              "client_id": "811959661135-cbh6rvns9c1845eqagmlgsvkte8pfr94.apps.googleusercontent.com",
+              "client_id": "706853876894-39dnr3nmrf2bhe08a430t8jr5h6lmq6c.apps.googleusercontent.com",
               "client_type": 3
             }
           ]

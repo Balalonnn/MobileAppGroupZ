@@ -1,14 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_application_1/screen/CartPage.dart';
-//import 'package:flutter_application_1/screen/CartPage.dart';
 import 'screen/HomePage.dart';
 import 'screen/LoginPage.dart';
+import 'screen/RegisterPage.dart';
 
 void main() {
   runApp(MyApp());
 }
-
-
 
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
@@ -23,10 +21,12 @@ class MyApp extends StatelessWidget {
         primarySwatch: Colors.blue,
       ),
       // routes: {
-      //   "/" :(context) => HomePage(),
-      //   "cartPage": (context) => CartPage(),
+      //  "/" :(context) => HomePage(),
+      //  "cartpage":(context) => CartPage(),
       // },
       home: HomePage(),
     );
   }
 }
+
+

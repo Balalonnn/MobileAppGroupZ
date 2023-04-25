@@ -11,10 +11,64 @@ class RegisterPage extends StatefulWidget {
 }
 
 class _RegisterPageState extends State<RegisterPage> {
-  // final formKey = GlobalKey<FormState>();
-  // Profile profile =
-  //     Profile(username: "username", email: "email", password: "password");
-  // final Future<FirebaseApp> firebase = Firebase.initializeApp();
+  final _formKey = GlobalKey<FormState>();
+  final _usernameController = TextEditingController();
+  final _passwordController = TextEditingController();
+  final _emailController = TextEditingController();
+  bool _isLoading = false;
+
+  Future<void> _register() async {
+    setState(() {
+      _isLoading = true;
+    });
+
+    try {
+      // Initialize Firebase
+      await Firebase.initializeApp();
+
+      // Create a new user with email and password
+      await FirebaseAuth.instance.createUserWithEmailAndPassword(
+        email: _emailController.text,
+        password: _passwordController.text,
+      );
+
+      // Update user's display name
+      await FirebaseAuth.instance.currentUser!.updateDisplayName(
+        _usernameController.text,
+      );
+
+      // Navigate to login page
+      Navigator.push(context, MaterialPageRoute(builder: (context) {
+        return LoginPage();
+      }));
+    } on FirebaseAuthException catch (e) {
+      if (e.code == 'weak-password') {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('The password provided is too weak.')),
+        );
+      } else if (e.code == 'email-already-in-use') {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('The account already exists for that email.')),
+        );
+      }
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Failed to register. Please try again later.')),
+      );
+    } finally {
+      setState(() {
+        _isLoading = false;
+      });
+    }
+  }
+
+  @override
+  void dispose() {
+    _usernameController.dispose();
+    _passwordController.dispose();
+    _emailController.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -22,110 +76,107 @@ class _RegisterPageState extends State<RegisterPage> {
       backgroundColor: Colors.grey,
       body: SingleChildScrollView(
         scrollDirection: Axis.vertical,
-        child: Column(
-          // key: formKey,
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            SizedBox(
-              height: 200.0,
-              width: 400,
-            ),
-            Text(
-              'REGISTER',
-              style: TextStyle(
-                  fontWeight: FontWeight.bold,
-                  color: Colors.black,
-                  fontSize: 70.0),
-            ),
-            Container(
-              margin: EdgeInsets.only(top: 80.0),
-              child: TextFormField(
-                decoration: InputDecoration(
-                  enabledBorder: OutlineInputBorder(
-                    borderRadius: BorderRadius.all(Radius.circular(30)),
-                    borderSide: BorderSide(color: Colors.transparent),
+        child: Form(
+          key: _formKey,
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              SizedBox(
+                height: 200.0,
+                width: 400,
+              ),
+              Text(
+                'REGISTER',
+                style: TextStyle(
+                    fontWeight: FontWeight.bold,
+                    color: Colors.black,
+                    fontSize: 70.0),
+              ),
+              Container(
+                margin: EdgeInsets.only(top: 80.0),
+                child: TextFormField(
+                  controller: _usernameController,
+                  decoration: InputDecoration(
+                    enabledBorder: OutlineInputBorder(
+                      borderRadius: BorderRadius.all(Radius.circular(30)),
+                      borderSide: BorderSide(color: Colors.transparent),
+                    ),
+                    focusedBorder: OutlineInputBorder(
+                      borderRadius: BorderRadius.all(Radius.circular(30)),
+                      borderSide: BorderSide(color: Colors.black),
+                    ),
+                    prefixIcon: Icon(Icons.person),
+                    hintText: 'USERNAME',
+                    fillColor: Colors.white,
+                    filled: true,
                   ),
-                  focusedBorder: OutlineInputBorder(
-                    borderRadius: BorderRadius.all(Radius.circular(30)),
-                    borderSide: BorderSide(color: Colors.black),
-                  ),
-                  prefixIcon: Icon(Icons.person),
-                  hintText: 'USERNAME',
-                  fillColor: Colors.white,
-                  filled: true,
                 ),
               ),
-            ),
-            Container(
-              margin: EdgeInsets.only(top: 20.0),
-              child: TextFormField(
-                obscureText: true,
-                decoration: InputDecoration(
-                  enabledBorder: OutlineInputBorder(
-                    borderRadius: BorderRadius.all(Radius.circular(30)),
-                    borderSide: BorderSide(color: Colors.transparent),
+              Container(
+                margin: EdgeInsets.only(top: 20.0),
+                child: TextFormField(
+                  controller: _passwordController,
+                  obscureText: true,
+                  decoration: InputDecoration(
+                    enabledBorder: OutlineInputBorder(
+                      borderRadius: BorderRadius.all(Radius.circular(30)),
+                      borderSide: BorderSide(color: Colors.transparent),
+                    ),
+                    focusedBorder: OutlineInputBorder(
+                      borderRadius: BorderRadius.all(Radius.circular(30)),
+                      borderSide: BorderSide(color: Colors.transparent),
+                    ),
+                    prefixIcon: Icon(Icons.lock),
+                    hintText: 'PASSWORD',
+                    fillColor: Colors.white,
+                    filled: true,
                   ),
-                  focusedBorder: OutlineInputBorder(
-                    borderRadius: BorderRadius.all(Radius.circular(30)),
-                    borderSide: BorderSide(color: Colors.black),
-                  ),
-                  prefixIcon: Icon(Icons.lock),
-                  hintText: 'PASSWORD',
-                  fillColor: Colors.white,
-                  filled: true,
                 ),
               ),
-            ),
-            Container(
-              margin: EdgeInsets.only(top: 20.0),
-              child: TextFormField(
-                keyboardType: TextInputType.emailAddress,
-                decoration: InputDecoration(
-                  enabledBorder: OutlineInputBorder(
-                    borderRadius: BorderRadius.all(Radius.circular(30)),
-                    borderSide: BorderSide(color: Colors.transparent),
+              Container(
+                margin: EdgeInsets.only(top: 20.0),
+                child: TextFormField(
+                  controller: _emailController,
+                  keyboardType: TextInputType.emailAddress,
+                  decoration: InputDecoration(
+                    enabledBorder: OutlineInputBorder(
+                      borderRadius: BorderRadius.all(Radius.circular(30)),
+                      borderSide: BorderSide(color: Colors.transparent),
+                    ),
+                    focusedBorder: OutlineInputBorder(
+                      borderRadius: BorderRadius.all(Radius.circular(30)),
+                      borderSide: BorderSide(color: Colors.black),
+                    ),
+                    prefixIcon: Icon(Icons.email),
+                    hintText: 'EMAIL',
+                    fillColor: Colors.white,
+                    filled: true,
                   ),
-                  focusedBorder: OutlineInputBorder(
-                    borderRadius: BorderRadius.all(Radius.circular(30)),
-                    borderSide: BorderSide(color: Colors.black),
-                  ),
-                  prefixIcon: Icon(Icons.email),
-                  hintText: 'EMAIL',
-                  fillColor: Colors.white,
-                  filled: true,
                 ),
               ),
-            ),
-            Column(
-              children: [
-                Padding(
-                    padding:
-                        const EdgeInsets.only(left: 100, right: 100, top: 50),
-                    child: ElevatedButton(
-                      child: const Text(
-                        'REGISTER',
-                        style: TextStyle(
-                          color: Colors.white,
-                          fontWeight: FontWeight.w500,
-                          fontSize: 30,
-                        ),
-                      ),
-                      style: ElevatedButton.styleFrom(
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(20),
-                        ),
-                        primary: Colors.blueGrey, // Background color
-                      ),
-                      onPressed: () {
-                        Navigator.push(context,
-                            MaterialPageRoute(builder: (context) {
-                          return LoginPage();
-                        }));
-                      },
-                    )),
-              ],
-            ),
-          ],
+              Container(
+                margin: EdgeInsets.only(top: 30.0),
+                child: ElevatedButton(
+                  onPressed: _isLoading ? null : _register,
+                  child: Text(
+                    'REGISTER',
+                    style: TextStyle(
+                      color: Colors.white,
+                      fontSize: 20.0,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                  style: ElevatedButton.styleFrom(
+                    minimumSize: Size(300.0, 50.0),
+                    primary: Colors.black,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(30.0),
+                    ),
+                  ),
+                ),
+              ),
+            ],
+          ),
         ),
       ),
     );
@@ -149,7 +200,6 @@ class _RegisterPageState extends State<RegisterPage> {
 //   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
 //   final TextEditingController _nameController = TextEditingController();
 //   final TextEditingController _emailController = TextEditingController();
-//   final TextEditingController _phoneController = TextEditingController();
 //   final TextEditingController _passwordController = TextEditingController();
 //   final CollectionReference _userCollection =
 //       FirebaseFirestore.instance.collection("User");
